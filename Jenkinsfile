@@ -6,31 +6,29 @@ pipeline {
 
         stage('Source Checkout') {
             steps {
-                checkout scm
                 echo 'Source code checked out successfully'
             }
         }
 
         stage('Build and Install Dependencies') {
             steps {
-                bat 'python -m venv .venv'
-                bat '.venv\\Scripts\\python.exe -m pip install --upgrade pip'
-                bat '.venv\\Scripts\\python.exe -m pip install -r requirements.txt'
+                sh 'python3 -m venv .venv'
+                sh '.venv/bin/python -m pip install --upgrade pip'
+                sh '.venv/bin/python -m pip install -r requirements.txt'
             }
         }
 
         stage('Automated Testing') {
             steps {
-                bat '.venv\\Scripts\\python.exe -m pytest -v'
+                sh '.venv/bin/python -m pytest -v'
             }
         }
 
         stage('Deployment Packaging') {
             steps {
-                bat 'if exist deployment rmdir /s /q deployment'
-                bat 'mkdir deployment'
-                bat 'copy app.py deployment\\app.py'
-                bat 'copy requirements.txt deployment\\requirements.txt'
+                sh 'rm -rf deployment'
+                sh 'mkdir -p deployment'
+                sh 'cp app.py requirements.txt deployment/'
 
                 archiveArtifacts artifacts: 'deployment/**',
                                  fingerprint: true
