@@ -12,3 +12,6 @@ def test_cpu_usage():
     update_metrics()
 
     assert CPU_USAGE._value.get() == 25.0
+
+def test_intentional_failure():
+    assert False, "Intentional test failure"
